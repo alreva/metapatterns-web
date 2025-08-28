@@ -130,7 +130,7 @@ body {
 .nav-content {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: 8px 0 120px 0;
 }
 
 .nav-section {
