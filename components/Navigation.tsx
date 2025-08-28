@@ -197,12 +197,17 @@ export default function Navigation({ className = '' }: NavigationProps) {
       
       <div className="nav-content">
         <div className="nav-section">
-          {navigationData.map((section) => (
+          {navigationData.map((section) => {
+            const currentPath = pathname.replace(/^\/+|\/+$/g, '') || 'home'
+            const sectionSlug = section.slug.replace(/^\/+|\/+$/g, '')
+            const isSectionActive = currentPath === sectionSlug
+            
+            return (
             <div key={section.slug} className="nav-group">
               <button
                 onClick={() => toggleSection(section.slug)}
                 className={`nav-toggle ${expandedSections.has(section.slug) ? 'expanded' : ''} ${
-                  pathname === `/${section.slug}` ? 'active' : ''
+                  isSectionActive ? 'active' : ''
                 }`}
               >
                 <Link href={`/${section.slug}`} className="flex-1">
@@ -217,7 +222,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
               
               <div className={`nav-items ${expandedSections.has(section.slug) ? 'expanded' : 'collapsed'}`}>
                 {section.items.map((item) => {
-                  const isActive = pathname === `/${item.slug}` || (pathname === '/' && item.slug === 'home')
+                  // Normalize both paths by removing leading/trailing slashes
+                  const currentPath = pathname.replace(/^\/+|\/+$/g, '') || 'home'
+                  const itemSlug = item.slug.replace(/^\/+|\/+$/g, '')
+                  const isActive = currentPath === itemSlug || (pathname === '/' && item.slug === 'home')
+                  
                   return (
                     <Link
                       key={item.slug}
@@ -230,7 +239,8 @@ export default function Navigation({ className = '' }: NavigationProps) {
                 })}
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </nav>

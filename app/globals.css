@@ -253,8 +253,10 @@ body {
 
 .nav-link.active {
   color: rgb(var(--primary));
-  background: rgba(var(--primary), 0.1);
-  font-weight: 500;
+  background: rgba(var(--primary), 0.15);
+  font-weight: 600;
+  border-left: 3px solid rgb(var(--primary));
+  padding-left: 41px;
 }
 
 .nav-link.active:visited {
