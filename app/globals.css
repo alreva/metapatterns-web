@@ -113,6 +113,16 @@ body {
   font-weight: 500;
 }
 
+/* Reset all link styles within sidebar */
+.sidebar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidebar a:visited {
+  color: inherit;
+}
+
 /* Navigation Content */
 .nav-content {
   flex: 1;
@@ -170,6 +180,15 @@ body {
   color: rgb(var(--primary-foreground));
 }
 
+.nav-toggle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-toggle a:visited {
+  color: inherit;
+}
+
 .nav-toggle.expanded {
   margin-bottom: 4px;
 }
@@ -214,15 +233,27 @@ body {
   line-height: 1.4;
 }
 
+.nav-link:visited {
+  color: rgb(var(--muted-foreground));
+}
+
 .nav-link:hover {
   color: rgb(var(--foreground));
   background: rgb(var(--sidebar-hover));
+}
+
+.nav-link:visited:hover {
+  color: rgb(var(--foreground));
 }
 
 .nav-link.active {
   color: rgb(var(--primary));
   background: rgba(var(--primary), 0.1);
   font-weight: 500;
+}
+
+.nav-link.active:visited {
+  color: rgb(var(--primary));
 }
 
 /* Quick Actions */

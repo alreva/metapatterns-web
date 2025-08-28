@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 // Static navigation structure based on _Sidebar.md
@@ -100,9 +101,59 @@ interface NavigationProps {
 }
 
 export default function Navigation({ className = '' }: NavigationProps) {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['introduction', 'part-2-basic-metapatterns']) // Start with some sections expanded
-  )
+  const pathname = usePathname()
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+
+  // Find which section contains the current page
+  const findCurrentSection = (currentPath: string): string | null => {
+    // Remove leading slash and handle home page
+    const cleanPath = currentPath.replace(/^\//, '') || 'home'
+    
+    for (const section of navigationData) {
+      // Check if current path matches section slug
+      if (cleanPath === section.slug) {
+        return section.slug
+      }
+      
+      // Check if current path matches any item in the section
+      for (const item of section.items) {
+        if (cleanPath === item.slug) {
+          return section.slug
+        }
+      }
+    }
+    return null
+  }
+
+  // Initialize and manage expanded sections
+  useEffect(() => {
+    // Load from localStorage
+    const savedExpanded = localStorage.getItem('nav-expanded-sections')
+    let initialExpanded: Set<string>
+    
+    if (savedExpanded) {
+      try {
+        initialExpanded = new Set(JSON.parse(savedExpanded))
+      } catch {
+        initialExpanded = new Set()
+      }
+    } else {
+      initialExpanded = new Set()
+    }
+
+    // Always expand the section containing the current page
+    const currentSection = findCurrentSection(pathname)
+    if (currentSection) {
+      initialExpanded.add(currentSection)
+    }
+
+    setExpandedSections(initialExpanded)
+  }, [pathname])
+
+  // Save to localStorage when expanded sections change
+  useEffect(() => {
+    localStorage.setItem('nav-expanded-sections', JSON.stringify([...expandedSections]))
+  }, [expandedSections])
 
   const toggleSection = (slug: string) => {
     const newExpanded = new Set(expandedSections)
@@ -133,7 +184,9 @@ export default function Navigation({ className = '' }: NavigationProps) {
             <div key={section.slug} className="nav-group">
               <button
                 onClick={() => toggleSection(section.slug)}
-                className={`nav-toggle ${expandedSections.has(section.slug) ? 'expanded' : ''}`}
+                className={`nav-toggle ${expandedSections.has(section.slug) ? 'expanded' : ''} ${
+                  pathname === `/${section.slug}` ? 'active' : ''
+                }`}
               >
                 <Link href={`/${section.slug}`} className="flex-1">
                   <span>{section.title}</span>
@@ -146,15 +199,18 @@ export default function Navigation({ className = '' }: NavigationProps) {
               </button>
               
               <div className={`nav-items ${expandedSections.has(section.slug) ? 'expanded' : 'collapsed'}`}>
-                {section.items.map((item) => (
-                  <Link
-                    key={item.slug}
-                    href={`/${item.slug}`}
-                    className="nav-link"
-                  >
-                    {item.title}
-                  </Link>
-                ))}
+                {section.items.map((item) => {
+                  const isActive = pathname === `/${item.slug}` || (pathname === '/' && item.slug === 'home')
+                  return (
+                    <Link
+                      key={item.slug}
+                      href={`/${item.slug}`}
+                      className={`nav-link ${isActive ? 'active' : ''}`}
+                    >
+                      {item.title}
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           ))}
