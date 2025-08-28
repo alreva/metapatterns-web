@@ -74,7 +74,8 @@ function convertWikiLinks(content: string): string {
       return `[${text}](/${filename.toLowerCase().replace(/\s+/g, '-')})`
     })
     // Fix image paths to be relative to public
-    .replace(/src="img\//g, 'src="/content/img/')
+    // Remove 'img/' prefix and add '/content/' prefix
+    .replace(/src="img\/([^"]+)"/g, 'src="/content/$1"')
     .replace(/src="Pictures\//g, 'src="/content/Pictures/')
 }
 
