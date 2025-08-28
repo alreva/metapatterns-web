@@ -206,6 +206,10 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
           <p className="sidebar-subtitle">
             Architecture Patterns Guide
           </p>
+          <div className="sidebar-credits">
+            <div className="credit-line">by Denys Poltorak</div>
+            <div className="credit-line">edited by Lars Noodén</div>
+          </div>
         </Link>
       </div>
       

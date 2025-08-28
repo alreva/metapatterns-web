@@ -116,6 +116,24 @@ body {
   font-weight: 500;
 }
 
+.sidebar-credits {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(var(--border), 0.5);
+}
+
+.credit-line {
+  font-size: 11px;
+  color: rgb(var(--muted-foreground));
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+.credit-line:last-child {
+  margin-bottom: 0;
+}
+
 /* Reset all link styles within sidebar */
 .sidebar a {
   color: inherit;
