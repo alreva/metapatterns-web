@@ -190,11 +190,18 @@ export async function getMarkdownBySlug(slug: string): Promise<MarkdownData | nu
       .use(remarkHtml, { sanitize: false })
       .process(processedContent)
     
-    // Add anchor IDs to headings and remove navigation tables from HTML output
+    // Add anchor IDs to headings and remove the last table if it contains navigation symbols
     let htmlContent = addHeadingAnchors(processedMarkdown.toString())
     
-    // Remove navigation tables from the HTML (they contain << >> ^ patterns)
-    htmlContent = htmlContent.replace(/<table>[\s\S]*?<th[^>]*>[^<]*(?:&lt;&lt;|&#x3C;&#x3C;)[^<]*<\/th>[\s\S]*?<\/table>/gi, '')
+    // Remove the last table if it contains << >> ^ symbols (navigation table)
+    const tables = htmlContent.match(/<table[\s\S]*?<\/table>/gi)
+    if (tables && tables.length > 0) {
+      const lastTable = tables[tables.length - 1]
+      if (lastTable.includes('&lt;&lt;') || lastTable.includes('&gt;&gt;') || lastTable.includes('^') || 
+          lastTable.includes('&#x3C;&#x3C;') || lastTable.includes('&#x3E;&#x3E;')) {
+        htmlContent = htmlContent.replace(lastTable, '')
+      }
+    }
     
     // Extract title from filename or frontmatter
     const title = data.title || path.basename(filePath, '.md')

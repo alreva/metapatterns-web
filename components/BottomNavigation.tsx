@@ -126,15 +126,30 @@ export default function BottomNavigation({ currentSlug }: BottomNavigationProps)
   
   // Find parent section for the current page
   let parentSection = null
+  
+  // Check if current page is a top-level Part page (parent is Home)
+  let isPartPage = false
   for (const section of navigationData) {
-    // Check if current page is a sub-item of this section
-    for (const item of section.items) {
-      if (item.slug === normalizedSlug) {
-        parentSection = section
-        break
-      }
+    if (section.slug === normalizedSlug) {
+      // This is a Part page, parent should be Home
+      parentSection = { title: 'Home', slug: 'home' }
+      isPartPage = true
+      break
     }
-    if (parentSection) break
+  }
+  
+  // If not a Part page, check if it's a sub-item of a section
+  if (!isPartPage) {
+    for (const section of navigationData) {
+      // Check if current page is a sub-item of this section
+      for (const item of section.items) {
+        if (item.slug === normalizedSlug) {
+          parentSection = section
+          break
+        }
+      }
+      if (parentSection) break
+    }
   }
   
   if (!prevPage && !nextPage && !parentSection) {
