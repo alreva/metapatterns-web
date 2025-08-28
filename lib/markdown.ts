@@ -50,6 +50,24 @@ function getFileMap(): Map<string, string> {
   return fileMap
 }
 
+// Generate anchor IDs from heading text
+function generateAnchorId(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with dashes
+    .replace(/-+/g, '-') // Replace multiple dashes with single
+    .replace(/^-|-$/g, '') // Remove leading/trailing dashes
+}
+
+// Add anchor IDs to headings - convert to HTML with id attributes
+function addHeadingAnchors(htmlContent: string): string {
+  return htmlContent.replace(/<(h[1-6])>(.+?)<\/h[1-6]>/g, (match, tag, title) => {
+    const anchorId = generateAnchorId(title)
+    return `<${tag} id="${anchorId}">${title}</${tag}>`
+  })
+}
+
 // Convert wiki-style links <filename> to proper URLs
 function convertWikiLinks(content: string): string {
   const map = getFileMap()
@@ -168,7 +186,8 @@ export async function getMarkdownBySlug(slug: string): Promise<MarkdownData | nu
       .use(remarkHtml, { sanitize: false })
       .process(processedContent)
     
-    const htmlContent = processedMarkdown.toString()
+    // Add anchor IDs to headings in the HTML output
+    const htmlContent = addHeadingAnchors(processedMarkdown.toString())
     
     // Extract title from filename or frontmatter
     const title = data.title || path.basename(filePath, '.md')
