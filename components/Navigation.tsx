@@ -102,20 +102,37 @@ interface NavigationProps {
 
 export default function Navigation({ className = '' }: NavigationProps) {
   const pathname = usePathname()
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
-
-  // Find which section contains the current page
-  const findCurrentSection = (currentPath: string): string | null => {
-    // Remove leading slash and handle home page
-    const cleanPath = currentPath.replace(/^\//, '') || 'home'
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    // Always start with the current section expanded to avoid empty state
+    const cleanPath = pathname.replace(/^\//, '') || 'home'
     
     for (const section of navigationData) {
       // Check if current path matches section slug
       if (cleanPath === section.slug) {
-        return section.slug
+        return new Set([section.slug])
       }
       
       // Check if current path matches any item in the section
+      for (const item of section.items) {
+        if (cleanPath === item.slug) {
+          return new Set([section.slug])
+        }
+      }
+    }
+    return new Set()
+  })
+  
+  const [hasHydrated, setHasHydrated] = useState(false)
+
+  // Find which section contains the current page
+  const findCurrentSection = (currentPath: string): string | null => {
+    const cleanPath = currentPath.replace(/^\//, '') || 'home'
+    
+    for (const section of navigationData) {
+      if (cleanPath === section.slug) {
+        return section.slug
+      }
+      
       for (const item of section.items) {
         if (cleanPath === item.slug) {
           return section.slug
@@ -125,35 +142,35 @@ export default function Navigation({ className = '' }: NavigationProps) {
     return null
   }
 
-  // Initialize and manage expanded sections
+  // Hydrate with localStorage data after mount
   useEffect(() => {
-    // Load from localStorage
-    const savedExpanded = localStorage.getItem('nav-expanded-sections')
-    let initialExpanded: Set<string>
+    let savedExpanded: Set<string> = new Set()
     
-    if (savedExpanded) {
-      try {
-        initialExpanded = new Set(JSON.parse(savedExpanded))
-      } catch {
-        initialExpanded = new Set()
+    try {
+      const saved = localStorage.getItem('nav-expanded-sections')
+      if (saved) {
+        savedExpanded = new Set(JSON.parse(saved))
       }
-    } else {
-      initialExpanded = new Set()
+    } catch {
+      // Ignore errors
     }
 
-    // Always expand the section containing the current page
+    // Always include current section
     const currentSection = findCurrentSection(pathname)
     if (currentSection) {
-      initialExpanded.add(currentSection)
+      savedExpanded.add(currentSection)
     }
 
-    setExpandedSections(initialExpanded)
+    setExpandedSections(savedExpanded)
+    setHasHydrated(true)
   }, [pathname])
 
-  // Save to localStorage when expanded sections change
+  // Save to localStorage
   useEffect(() => {
-    localStorage.setItem('nav-expanded-sections', JSON.stringify([...expandedSections]))
-  }, [expandedSections])
+    if (hasHydrated) {
+      localStorage.setItem('nav-expanded-sections', JSON.stringify([...expandedSections]))
+    }
+  }, [expandedSections, hasHydrated])
 
   const toggleSection = (slug: string) => {
     const newExpanded = new Set(expandedSections)
