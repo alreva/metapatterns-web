@@ -5,8 +5,24 @@ import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
-// Static navigation structure based on _Sidebar.md
-const navigationData = [
+interface NavigationItem {
+  title: string
+  slug: string
+}
+
+interface NavigationSection {
+  title: string
+  slug: string
+  items: NavigationItem[]
+}
+
+interface NavigationComponentProps {
+  navigationData: NavigationSection[]
+  className?: string
+}
+
+// Static navigation structure based on _Sidebar.md (fallback)
+const fallbackNavigationData = [
   {
     title: 'Introduction',
     slug: 'introduction',
@@ -96,17 +112,15 @@ const navigationData = [
   }
 ]
 
-interface NavigationProps {
-  className?: string
-}
-
-export default function Navigation({ className = '' }: NavigationProps) {
+export default function Navigation({ navigationData, className = '' }: NavigationComponentProps) {
   const pathname = usePathname()
+  const navData = navigationData && navigationData.length > 0 ? navigationData : fallbackNavigationData
+  
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
     // Always start with the current section expanded to avoid empty state
     const cleanPath = pathname.replace(/^\//, '') || 'home'
     
-    for (const section of navigationData) {
+    for (const section of navData) {
       // Check if current path matches section slug
       if (cleanPath === section.slug) {
         return new Set([section.slug])
@@ -128,7 +142,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
   const findCurrentSection = (currentPath: string): string | null => {
     const cleanPath = currentPath.replace(/^\//, '') || 'home'
     
-    for (const section of navigationData) {
+    for (const section of navData) {
       if (cleanPath === section.slug) {
         return section.slug
       }
@@ -197,7 +211,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
       
       <div className="nav-content">
         <div className="nav-section">
-          {navigationData.map((section) => {
+          {navData.map((section) => {
             const currentPath = pathname.replace(/^\/+|\/+$/g, '') || 'home'
             const sectionSlug = section.slug.replace(/^\/+|\/+$/g, '')
             const isSectionActive = currentPath === sectionSlug

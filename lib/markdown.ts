@@ -225,39 +225,73 @@ export function getAllSlugs(): string[] {
   return files.map(filePathToSlug)
 }
 
-// Get navigation structure from Home.md
+// Get navigation structure from _Sidebar.md
 export async function getNavigation() {
-  const homeData = await getMarkdownBySlug('home')
-  if (!homeData) return []
-  
-  // Parse the content to extract navigation structure
-  // This is a simplified parser - you might want to make it more robust
-  const lines = homeData.content.split('\n')
-  const nav: NavigationSection[] = []
-  
-  let currentSection: NavigationSection | null = null
-  
-  for (const line of lines) {
-    if (line.startsWith('<h3>')) {
-      const match = line.match(/<h3><a href="\/([^"]+)">([^<]+)<\/a><\/h3>/)
-      if (match) {
+  try {
+    const sidebarPath = path.join(contentDirectory, '_Sidebar.md')
+    
+    if (!fs.existsSync(sidebarPath)) {
+      return []
+    }
+    
+    const fileContents = fs.readFileSync(sidebarPath, 'utf8')
+    const { content } = matter(fileContents)
+    
+    const nav: NavigationSection[] = []
+    const lines = content.split('\n')
+    
+    let currentSection: NavigationSection | null = null
+    
+    for (const line of lines) {
+      // Match <details><summary><a href="...">Title</a></summary>
+      const sectionMatch = line.match(/<summary><a href="([^"]+)">([^<]+)<\/a><\/summary>/)
+      if (sectionMatch) {
+        const filename = sectionMatch[1]
+        const title = sectionMatch[2]
+        
+        // Convert filename to slug using the same logic
+        const map = getFileMap()
+        let slug = map.get(filename) || map.get(filename.replace(/\s+/g, ''))
+        
+        if (!slug) {
+          // Fallback to lowercase with dashes
+          slug = filename.toLowerCase().replace(/\s+/g, '-')
+        }
+        
         currentSection = {
-          title: match[2],
-          slug: match[1],
+          title,
+          slug,
           items: []
         }
         nav.push(currentSection)
+        continue
       }
-    } else if (line.includes('<li><a href="/') && currentSection) {
-      const match = line.match(/<a href="\/([^"]+)">([^<]+)<\/a>/)
-      if (match) {
+      
+      // Match - [Title](<Filename>)
+      const itemMatch = line.match(/^- \[([^\]]+)\]\(<([^>]+)>\)/)
+      if (itemMatch && currentSection) {
+        const title = itemMatch[1]
+        const filename = itemMatch[2]
+        
+        // Convert filename to slug using the same logic
+        const map = getFileMap()
+        let slug = map.get(filename) || map.get(filename.replace(/\s+/g, ''))
+        
+        if (!slug) {
+          // Fallback to lowercase with dashes
+          slug = filename.toLowerCase().replace(/\s+/g, '-')
+        }
+        
         currentSection.items.push({
-          title: match[2],
-          slug: match[1]
+          title,
+          slug
         })
       }
     }
+    
+    return nav
+  } catch (error) {
+    console.error('Error parsing navigation from _Sidebar.md:', error)
+    return []
   }
-  
-  return nav
 }

@@ -3,8 +3,24 @@
 import Link from 'next/link'
 import { ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 
-// Navigation data structure (shared from Navigation.tsx)
-const navigationData = [
+interface NavigationItem {
+  title: string
+  slug: string
+}
+
+interface NavigationSection {
+  title: string
+  slug: string
+  items: NavigationItem[]
+}
+
+interface BottomNavigationProps {
+  currentSlug: string
+  navigationData: NavigationSection[]
+}
+
+// Fallback navigation data structure
+const fallbackNavigationData = [
   {
     title: 'Introduction',
     slug: 'introduction',
@@ -94,11 +110,9 @@ const navigationData = [
   }
 ]
 
-interface BottomNavigationProps {
-  currentSlug: string
-}
-
-export default function BottomNavigation({ currentSlug }: BottomNavigationProps) {
+export default function BottomNavigation({ currentSlug, navigationData }: BottomNavigationProps) {
+  const navData = navigationData && navigationData.length > 0 ? navigationData : fallbackNavigationData
+  
   // Create a flat list of all pages in order
   const allPages: { title: string; slug: string }[] = []
   
@@ -106,7 +120,7 @@ export default function BottomNavigation({ currentSlug }: BottomNavigationProps)
   allPages.push({ title: 'Home', slug: 'home' })
   
   // Add all sections and their items in order
-  for (const section of navigationData) {
+  for (const section of navData) {
     allPages.push({ title: section.title, slug: section.slug })
     for (const item of section.items) {
       allPages.push({ title: item.title, slug: item.slug })
@@ -129,7 +143,7 @@ export default function BottomNavigation({ currentSlug }: BottomNavigationProps)
   
   // Check if current page is a top-level Part page (parent is Home)
   let isPartPage = false
-  for (const section of navigationData) {
+  for (const section of navData) {
     if (section.slug === normalizedSlug) {
       // This is a Part page, parent should be Home
       parentSection = { title: 'Home', slug: 'home' }
@@ -140,7 +154,7 @@ export default function BottomNavigation({ currentSlug }: BottomNavigationProps)
   
   // If not a Part page, check if it's a sub-item of a section
   if (!isPartPage) {
-    for (const section of navigationData) {
+    for (const section of navData) {
       // Check if current page is a sub-item of this section
       for (const item of section.items) {
         if (item.slug === normalizedSlug) {

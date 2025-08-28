@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getAllSlugs, getMarkdownBySlug } from '@/lib/markdown'
+import { getAllSlugs, getMarkdownBySlug, getNavigation } from '@/lib/markdown'
 import Navigation from '@/components/Navigation'
 import BottomNavigation from '@/components/BottomNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const slug = params.slug?.join('/') || 'home'
   const data = await getMarkdownBySlug(slug)
+  const navigationData = await getNavigation()
   
   if (!data) {
     notFound()
@@ -49,7 +50,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className="layout-container">
       {/* Sidebar Navigation */}
-      <Navigation />
+      <Navigation navigationData={navigationData} />
       
       {/* Main Content */}
       <main className="main-content">
@@ -76,7 +77,7 @@ export default async function Page({ params }: Props) {
               dangerouslySetInnerHTML={{ __html: data.content }} 
             />
             
-            <BottomNavigation currentSlug={slug} />
+            <BottomNavigation currentSlug={slug} navigationData={navigationData} />
           </article>
         </div>
       </main>
