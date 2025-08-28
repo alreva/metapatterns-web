@@ -45,25 +45,36 @@ export default async function Page({ params }: Props) {
   }
   
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="flex">
-        {/* Sidebar Navigation */}
-        <Navigation />
+    <div className="layout-container">
+      {/* Sidebar Navigation */}
+      <Navigation />
+      
+      {/* Main Content */}
+      <main className="main-content">
+        <div className="top-bar">
+          <div className="breadcrumb">
+            <span className="breadcrumb-current">{data.title}</span>
+          </div>
+        </div>
         
-        {/* Main Content */}
-        <main className="flex-1 ml-80 p-8">
-          <article className="prose prose-lg dark:prose-invert max-w-4xl">
-            <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">
-              {data.title}
-            </h1>
+        <div className="article-container">
+          <article>
+            <header className="article-header">
+              <h1 className="article-title">
+                {data.title}
+              </h1>
+              <div className="article-meta">
+                Architecture Pattern Guide
+              </div>
+            </header>
             
             <div 
               className="markdown-content"
               dangerouslySetInnerHTML={{ __html: data.content }} 
             />
           </article>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }
