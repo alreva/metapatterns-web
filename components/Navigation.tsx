@@ -115,49 +115,47 @@ export default function Navigation({ className = '' }: NavigationProps) {
   }
 
   return (
-    <nav className={`fixed left-0 top-0 h-full w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto ${className}`}>
-      <div className="p-6">
-        <Link href="/" className="block mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <nav className={`sidebar ${className}`}>
+      <div className="sidebar-header">
+        <Link href="/" className="block">
+          <h1 className="sidebar-title">
             Metapatterns
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="sidebar-subtitle">
             Architecture Patterns Guide
           </p>
         </Link>
-        
-        <div className="space-y-2">
+      </div>
+      
+      <div className="nav-content">
+        <div className="nav-section">
           {navigationData.map((section) => (
-            <div key={section.slug} className="border border-gray-200 dark:border-gray-600 rounded-lg">
+            <div key={section.slug} className="nav-group">
               <button
                 onClick={() => toggleSection(section.slug)}
-                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className={`nav-toggle ${expandedSections.has(section.slug) ? 'expanded' : ''}`}
               >
-                <Link href={`/${section.slug}`} className="flex-1 hover:text-blue-600 dark:hover:text-blue-400">
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {section.title}
-                  </span>
+                <Link href={`/${section.slug}`} className="flex-1">
+                  <span>{section.title}</span>
                 </Link>
                 {expandedSections.has(section.slug) ? (
-                  <ChevronDownIcon className="w-4 h-4 text-gray-500" />
+                  <ChevronDownIcon className="nav-toggle-icon" />
                 ) : (
-                  <ChevronRightIcon className="w-4 h-4 text-gray-500" />
+                  <ChevronRightIcon className="nav-toggle-icon" />
                 )}
               </button>
               
-              {expandedSections.has(section.slug) && (
-                <div className="border-t border-gray-200 dark:border-gray-600">
-                  {section.items.map((item) => (
-                    <Link
-                      key={item.slug}
-                      href={`/${item.slug}`}
-                      className="block px-6 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <div className={`nav-items ${expandedSections.has(section.slug) ? 'expanded' : 'collapsed'}`}>
+                {section.items.map((item) => (
+                  <Link
+                    key={item.slug}
+                    href={`/${item.slug}`}
+                    className="nav-link"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
             </div>
           ))}
         </div>
