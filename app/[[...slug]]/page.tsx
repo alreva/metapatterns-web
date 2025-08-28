@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getAllSlugs, getMarkdownBySlug } from '@/lib/markdown'
 import Navigation from '@/components/Navigation'
 import BottomNavigation from '@/components/BottomNavigation'
+import ThemeToggle from '@/components/ThemeToggle'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -56,6 +57,7 @@ export default async function Page({ params }: Props) {
           <div className="breadcrumb">
             <span className="breadcrumb-current">{data.title}</span>
           </div>
+          <ThemeToggle />
         </div>
         
         <div className="article-container">

@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Light theme (default) */
+[data-theme="light"] {
   --background: 255 255 255;
   --foreground: 31 41 55;
   --muted: 249 250 251;
@@ -16,7 +17,8 @@
   --link: 79 70 229;
 }
 
-.dark {
+/* Dark theme */
+[data-theme="dark"] {
   --background: 17 24 39;
   --foreground: 243 244 246;
   --muted: 31 41 55;
@@ -844,4 +846,31 @@ body {
   .markdown-content ol {
     margin-left: 20px;
   }
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid rgb(var(--border));
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgb(var(--foreground));
+}
+
+.theme-toggle:hover {
+  background: rgba(var(--primary), 0.1);
+  border-color: rgb(var(--primary));
+  color: rgb(var(--primary));
+}
+
+.theme-toggle-icon {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
 }
