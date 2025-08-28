@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getAllSlugs, getMarkdownBySlug } from '@/lib/markdown'
 import Navigation from '@/components/Navigation'
+import BottomNavigation from '@/components/BottomNavigation'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -72,6 +73,8 @@ export default async function Page({ params }: Props) {
               className="markdown-content"
               dangerouslySetInnerHTML={{ __html: data.content }} 
             />
+            
+            <BottomNavigation currentSlug={slug} />
           </article>
         </div>
       </main>

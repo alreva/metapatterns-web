@@ -73,6 +73,10 @@ function convertWikiLinks(content: string): string {
   const map = getFileMap()
   
   return content
+    // Remove embedded navigation tables - more comprehensive pattern
+    .replace(/\|\s*[^|]*<<[^|]*\|[^|]*\^[^|]*\^[^|]*\|[^|]*>>[^|]*\|\s*[\r\n]+\|\s*[-\s|]+\|\s*/g, '')
+    // Remove any remaining markdown table rows with navigation symbols
+    .replace(/\|\s*[^|]*(?:<<|>>|\^)[^|]*\|[^|]*(?:<<|>>|\^)[^|]*\|[^|]*(?:<<|>>|\^)[^|]*\|\s*/g, '')
     // Convert <filename#section> to proper URL with section
     .replace(/\[([^\]]+)\]\(<([^>]+)#([^>]+)>\)/g, (match, text, filename, section) => {
       const slug = map.get(filename) || map.get(filename.replace(/\s+/g, ''))
@@ -186,8 +190,11 @@ export async function getMarkdownBySlug(slug: string): Promise<MarkdownData | nu
       .use(remarkHtml, { sanitize: false })
       .process(processedContent)
     
-    // Add anchor IDs to headings in the HTML output
-    const htmlContent = addHeadingAnchors(processedMarkdown.toString())
+    // Add anchor IDs to headings and remove navigation tables from HTML output
+    let htmlContent = addHeadingAnchors(processedMarkdown.toString())
+    
+    // Remove navigation tables from the HTML (they contain << >> ^ patterns)
+    htmlContent = htmlContent.replace(/<table>[\s\S]*?<th[^>]*>[^<]*(?:&lt;&lt;|&#x3C;&#x3C;)[^<]*<\/th>[\s\S]*?<\/table>/gi, '')
     
     // Extract title from filename or frontmatter
     const title = data.title || path.basename(filePath, '.md')
