@@ -132,6 +132,7 @@ body {
 .nav-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 8px 0 120px 0;
 }
 
@@ -150,6 +151,10 @@ body {
 
 .nav-content::-webkit-scrollbar-thumb:hover {
   background: rgba(var(--muted-foreground), 0.5);
+}
+
+.nav-content::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .nav-section {
