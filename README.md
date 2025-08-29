@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Metapatterns - Web Version
 
-## Getting Started
+A static website for the **Metapatterns** book on software architecture patterns.
 
-First, run the development server:
+🌐 **Live Site**: https://resonant-mandazi-28b74c.netlify.app
+
+## Book Content & Copyright
+
+⚠️ **IMPORTANT**: The book content in this repository belongs to its author **Denys Poltorak**.
+
+- **Original Book Repository**: https://github.com/denyspoltorak/metapatterns
+- **Author**: Denys Poltorak
+- **Editor**: Lars Noodén
+- **License**: The book content is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+This repository contains only the web presentation layer for the book. All intellectual property rights for the book's content remain with the original author.
+
+## About This Project
+
+This is a Next.js-based static site generator that transforms the Metapatterns book's markdown files into a modern, searchable documentation website with:
+
+- 📚 Complete book content with 50+ chapters on software architecture patterns
+- 🌓 Dark/Light theme toggle
+- 📱 Responsive design
+- 🔍 Navigation with collapsible sections
+- 🔗 Cross-references between patterns
+- ⚡ Static generation for fast loading
+
+## Technical Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Styling**: Tailwind CSS v4 + Custom CSS
+- **Markdown Processing**: remark, remark-gfm, gray-matter
+- **Deployment**: Netlify
+- **Icons**: Heroicons
+
+## Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build static site
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The site is configured for deployment on Netlify:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Deploy to Netlify
+netlify deploy --prod
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+metapatterns-web/
+├── app/              # Next.js app router pages
+├── components/       # React components
+├── content/          # Book markdown files (from original repo)
+├── lib/              # Utility functions and markdown processing
+├── public/content/   # Book images and assets
+└── netlify.toml      # Netlify configuration
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This repository is for the web presentation only. For contributions to the book content itself, please visit the [original repository](https://github.com/denyspoltorak/metapatterns).
 
-## Deploy on Vercel
+## Acknowledgments
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Denys Poltorak** - Author of the Metapatterns book
+- **Lars Noodén** - Editor
+- All contributors to the original Metapatterns book
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+*This web version was created to make the valuable content of the Metapatterns book more accessible through a modern web interface.*
