@@ -3,6 +3,7 @@ import { getAllSlugs, getMarkdownBySlug, getNavigation } from '@/lib/markdown'
 import Navigation from '@/components/Navigation'
 import BottomNavigation from '@/components/BottomNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
+import TableOfContents from '@/components/TableOfContents'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -61,24 +62,28 @@ export default async function Page({ params }: Props) {
           <ThemeToggle />
         </div>
         
-        <div className="article-container">
-          <article>
-            <header className="article-header">
-              <h1 className="article-title">
-                {data.title}
-              </h1>
-              <div className="article-meta">
-                Architecture Pattern Guide
-              </div>
-            </header>
-            
-            <div 
-              className="markdown-content"
-              dangerouslySetInnerHTML={{ __html: data.content }} 
-            />
-            
-            <BottomNavigation currentSlug={slug} navigationData={navigationData} />
-          </article>
+        <div className="content-wrapper">
+          <div className="article-container">
+            <article>
+              <header className="article-header">
+                <h1 className="article-title">
+                  {data.title}
+                </h1>
+                <div className="article-meta">
+                  Architecture Pattern Guide
+                </div>
+              </header>
+              
+              <div 
+                className="markdown-content"
+                dangerouslySetInnerHTML={{ __html: data.content }} 
+              />
+              
+              <BottomNavigation currentSlug={slug} navigationData={navigationData} />
+            </article>
+          </div>
+          
+          <TableOfContents content={data.content} />
         </div>
       </main>
     </div>
