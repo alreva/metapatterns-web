@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Light theme (default) */
-[data-theme="light"] {
+:root {
   --background: 255 255 255;
   --foreground: 31 41 55;
   --muted: 249 250 251;
@@ -18,7 +18,7 @@
 }
 
 /* Dark theme */
-[data-theme="dark"] {
+.dark {
   --background: 17 24 39;
   --foreground: 243 244 246;
   --muted: 31 41 55;

@@ -12,17 +12,25 @@ export default function ThemeToggle() {
     if (savedTheme) {
       const isDarkTheme = savedTheme === 'dark'
       setIsDark(isDarkTheme)
-      document.documentElement.setAttribute('data-theme', savedTheme)
+      // Theme is already set by the script in layout.tsx
     } else {
       // Default to dark theme
-      document.documentElement.setAttribute('data-theme', 'dark')
+      setIsDark(true)
+      // Theme is already set by the script in layout.tsx
     }
   }, [])
 
   const toggleTheme = () => {
     const newTheme = isDark ? 'light' : 'dark'
     setIsDark(!isDark)
-    document.documentElement.setAttribute('data-theme', newTheme)
+    
+    // Update class instead of data-theme attribute
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    
     localStorage.setItem('theme', newTheme)
   }
 

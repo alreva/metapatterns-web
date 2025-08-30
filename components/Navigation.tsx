@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
@@ -116,17 +116,18 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
   const pathname = usePathname()
   const navData = navigationData && navigationData.length > 0 ? navigationData : fallbackNavigationData
   
+  // Track if we're ready to render
+  const [isReady, setIsReady] = useState(false)
+  
+  // Initialize with current section only (for SSG build)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
-    // Always start with the current section expanded to avoid empty state
     const cleanPath = pathname.replace(/^\//, '') || 'home'
     
     for (const section of navData) {
-      // Check if current path matches section slug
       if (cleanPath === section.slug) {
         return new Set([section.slug])
       }
       
-      // Check if current path matches any item in the section
       for (const item of section.items) {
         if (cleanPath === item.slug) {
           return new Set([section.slug])
@@ -135,56 +136,54 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
     }
     return new Set()
   })
-  
-  const [hasHydrated, setHasHydrated] = useState(false)
 
-  // Find which section contains the current page
-  const findCurrentSection = (currentPath: string): string | null => {
-    const cleanPath = currentPath.replace(/^\//, '') || 'home'
-    
-    for (const section of navData) {
-      if (cleanPath === section.slug) {
-        return section.slug
-      }
-      
-      for (const item of section.items) {
-        if (cleanPath === item.slug) {
-          return section.slug
-        }
-      }
-    }
-    return null
-  }
+  const isFirstRender = useRef(true)
 
-  // Hydrate with localStorage data after mount
+  // Load saved state from localStorage after mount
   useEffect(() => {
-    let savedExpanded: Set<string> = new Set()
-    
     try {
       const saved = localStorage.getItem('nav-expanded-sections')
       if (saved) {
-        savedExpanded = new Set(JSON.parse(saved))
+        const parsed = JSON.parse(saved) as string[]
+        const restoredSections = new Set(parsed)
+        
+        // Always ensure current section is included
+        const cleanPath = pathname.replace(/^\//, '') || 'home'
+        for (const section of navData) {
+          if (cleanPath === section.slug) {
+            restoredSections.add(section.slug)
+            break
+          }
+          
+          for (const item of section.items) {
+            if (cleanPath === item.slug) {
+              restoredSections.add(section.slug)
+              break
+            }
+          }
+        }
+        
+        setExpandedSections(restoredSections)
       }
-    } catch {
-      // Ignore errors
+    } catch (e) {
+      console.error('Failed to load navigation state:', e)
     }
+    
+    // Mark as ready after loading from localStorage
+    setIsReady(true)
+  }, []) // Only run once on mount
 
-    // Always include current section
-    const currentSection = findCurrentSection(pathname)
-    if (currentSection) {
-      savedExpanded.add(currentSection)
-    }
-
-    setExpandedSections(savedExpanded)
-    setHasHydrated(true)
-  }, [pathname])
-
-  // Save to localStorage
+  // Save to localStorage whenever sections change (but skip first render)
   useEffect(() => {
-    if (hasHydrated) {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    
+    if (isReady) {
       localStorage.setItem('nav-expanded-sections', JSON.stringify([...expandedSections]))
     }
-  }, [expandedSections, hasHydrated])
+  }, [expandedSections, isReady])
 
   const toggleSection = (slug: string) => {
     const newExpanded = new Set(expandedSections)
@@ -213,7 +212,8 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
         </Link>
       </div>
       
-      <div className="nav-content">
+      <div className="nav-content" style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.2s' }}>
+        {!isReady ? null : (
         <div className="nav-section">
           {navData.map((section) => {
             const currentPath = pathname.replace(/^\/+|\/+$/g, '') || 'home'
@@ -260,6 +260,7 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
             )
           })}
         </div>
+        )}
       </div>
     </nav>
   )
