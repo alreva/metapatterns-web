@@ -1340,8 +1340,8 @@ body {
   padding-left: 32px;
 }
 
-/* Landscape Mobile Specific Styles */
-@media (orientation: landscape) and (max-height: 600px) {
+/* Mobile Specific Styles - landscape with small height OR portrait with small width */
+@media (orientation: landscape) and (max-height: 600px), (orientation: portrait) and (max-width: 768px) {
   /* Hide regular sidebar and TOC */
   .sidebar {
     display: none;
@@ -1458,6 +1458,74 @@ body {
   /* Hide mobile menu button if shown */
   .mobile-menu-btn {
     display: none;
+  }
+}
+
+/* Portrait-specific adjustments for better vertical space usage */
+@media (orientation: portrait) and (max-width: 768px) {
+  /* Larger bottom navigation for easier touch */
+  .mobile-bottom-nav {
+    height: 60px;
+  }
+  
+  .mobile-bottom-nav-item {
+    padding: 8px 4px 6px;
+  }
+  
+  .mobile-bottom-nav-icon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 2px;
+  }
+  
+  .mobile-bottom-nav-label {
+    font-size: 11px;
+  }
+  
+  /* Adjust main content padding for larger bottom nav */
+  .main-content {
+    padding-bottom: 60px;
+  }
+  
+  /* Slightly larger fonts since we have more vertical space */
+  .article-title {
+    font-size: 24px;
+  }
+  
+  .markdown-content {
+    font-size: 14px;
+  }
+  
+  .markdown-content h1 {
+    font-size: 22px;
+  }
+  
+  .markdown-content h2 {
+    font-size: 20px;
+  }
+  
+  .markdown-content h3 {
+    font-size: 18px;
+  }
+  
+  /* More comfortable sheet sizing */
+  .bottom-sheet-header {
+    padding: 8px 16px;
+  }
+  
+  .bottom-sheet-title {
+    font-size: 16px;
+  }
+  
+  /* Mobile navigation links with more comfortable spacing */
+  .mobile-nav-section-header {
+    font-size: 14px;
+    padding: 12px 16px 8px;
+  }
+  
+  .mobile-nav-item {
+    font-size: 13px;
+    padding: 10px 16px 10px 28px;
   }
 }
 

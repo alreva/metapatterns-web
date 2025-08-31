@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation'
 import BottomNavigation from '@/components/BottomNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
 import TableOfContents from '@/components/TableOfContents'
-import MobileLandscapeLayout from '@/components/MobileLandscapeLayout'
+import MobileLayout from '@/components/MobileLayout'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -90,8 +90,8 @@ export default async function Page({ params }: Props) {
         </main>
       </div>
       
-      {/* Mobile Landscape UI */}
-      <MobileLandscapeLayout 
+      {/* Mobile UI */}
+      <MobileLayout 
         navigationData={navigationData} 
         content={data.content}
       />

@@ -18,38 +18,44 @@ interface NavigationSection {
   items: NavigationItem[]
 }
 
-interface MobileLandscapeLayoutProps {
+interface MobileLayoutProps {
   navigationData: NavigationSection[]
   content: string
 }
 
-export default function MobileLandscapeLayout({ navigationData, content }: MobileLandscapeLayoutProps) {
+export default function MobileLayout({ navigationData, content }: MobileLayoutProps) {
   const pathname = usePathname()
   const [isNavigationOpen, setIsNavigationOpen] = useState(false)
   const [isTocOpen, setIsTocOpen] = useState(false)
-  const [isMobileLandscape, setIsMobileLandscape] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [isBottomNavVisible, setIsBottomNavVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   
   useEffect(() => {
-    const checkOrientation = () => {
+    const checkMobile = () => {
       const isLandscape = window.matchMedia('(orientation: landscape)').matches
       const isSmallHeight = window.matchMedia('(max-height: 600px)').matches
-      setIsMobileLandscape(isLandscape && isSmallHeight)
+      const isPortrait = window.matchMedia('(orientation: portrait)').matches
+      const isSmallWidth = window.matchMedia('(max-width: 768px)').matches
+      
+      // Show mobile navigation for:
+      // - Landscape mode with small height (original landscape case)
+      // - Portrait mode with small width (new portrait case)
+      setIsMobile((isLandscape && isSmallHeight) || (isPortrait && isSmallWidth))
     }
     
-    checkOrientation()
-    window.addEventListener('resize', checkOrientation)
-    window.addEventListener('orientationchange', checkOrientation)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    window.addEventListener('orientationchange', checkMobile)
     
     return () => {
-      window.removeEventListener('resize', checkOrientation)
-      window.removeEventListener('orientationchange', checkOrientation)
+      window.removeEventListener('resize', checkMobile)
+      window.removeEventListener('orientationchange', checkMobile)
     }
   }, [])
 
   useEffect(() => {
-    if (!isMobileLandscape) return
+    if (!isMobile) return
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY
@@ -81,7 +87,7 @@ export default function MobileLandscapeLayout({ navigationData, content }: Mobil
     return () => {
       window.removeEventListener('scroll', throttledHandleScroll)
     }
-  }, [isMobileLandscape, lastScrollY])
+  }, [isMobile, lastScrollY])
 
   // Show nav when sheets are open
   useEffect(() => {
@@ -90,7 +96,7 @@ export default function MobileLandscapeLayout({ navigationData, content }: Mobil
     }
   }, [isNavigationOpen, isTocOpen])
 
-  if (!isMobileLandscape) {
+  if (!isMobile) {
     return null
   }
 
