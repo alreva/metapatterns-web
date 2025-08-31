@@ -171,7 +171,7 @@ export default function Navigation({ navigationData, className = '' }: Navigatio
     
     // Mark as ready after loading from localStorage
     setIsReady(true)
-  }, []) // Only run once on mount
+  }, [pathname, navData])
 
   // Save to localStorage whenever sections change (but skip first render)
   useEffect(() => {
