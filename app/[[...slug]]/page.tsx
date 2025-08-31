@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation'
 import BottomNavigation from '@/components/BottomNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
 import TableOfContents from '@/components/TableOfContents'
+import MobileLandscapeLayout from '@/components/MobileLandscapeLayout'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -49,43 +50,51 @@ export default async function Page({ params }: Props) {
   }
   
   return (
-    <div className="layout-container">
-      {/* Sidebar Navigation */}
-      <Navigation navigationData={navigationData} />
-      
-      {/* Main Content */}
-      <main className="main-content">
-        <div className="top-bar">
-          <div className="breadcrumb">
-            <span className="breadcrumb-current">{data.title}</span>
-          </div>
-          <ThemeToggle />
-        </div>
+    <>
+      <div className="layout-container">
+        {/* Sidebar Navigation */}
+        <Navigation navigationData={navigationData} />
         
-        <div className="content-wrapper">
-          <div className="article-container">
-            <article>
-              <header className="article-header">
-                <h1 className="article-title">
-                  {data.title}
-                </h1>
-                <div className="article-meta">
-                  Architecture Pattern Guide
-                </div>
-              </header>
-              
-              <div 
-                className="markdown-content"
-                dangerouslySetInnerHTML={{ __html: data.content }} 
-              />
-              
-              <BottomNavigation currentSlug={slug} navigationData={navigationData} />
-            </article>
+        {/* Main Content */}
+        <main className="main-content">
+          <div className="top-bar">
+            <div className="breadcrumb">
+              <span className="breadcrumb-current">{data.title}</span>
+            </div>
+            <ThemeToggle />
           </div>
           
-          <TableOfContents content={data.content} />
-        </div>
-      </main>
-    </div>
+          <div className="content-wrapper">
+            <div className="article-container">
+              <article>
+                <header className="article-header">
+                  <h1 className="article-title">
+                    {data.title}
+                  </h1>
+                  <div className="article-meta">
+                    Architecture Pattern Guide
+                  </div>
+                </header>
+                
+                <div 
+                  className="markdown-content"
+                  dangerouslySetInnerHTML={{ __html: data.content }} 
+                />
+                
+                <BottomNavigation currentSlug={slug} navigationData={navigationData} />
+              </article>
+            </div>
+            
+            <TableOfContents content={data.content} />
+          </div>
+        </main>
+      </div>
+      
+      {/* Mobile Landscape UI */}
+      <MobileLandscapeLayout 
+        navigationData={navigationData} 
+        content={data.content}
+      />
+    </>
   )
 }
