@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, ReactNode } from 'react'
+import { useState, useEffect, useRef, useCallback, ReactNode } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface BottomSheetProps {
@@ -75,16 +75,16 @@ export default function BottomSheet({
     setStartHeight(sheetHeight)
   }
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return
     
     const currentY = e.clientY
     const deltaY = startY - currentY
     const newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY))
     setSheetHeight(newHeight)
-  }
+  }, [isDragging, startY, startHeight, minHeight, maxHeight])
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!isDragging) return
     setIsDragging(false)
     
@@ -100,7 +100,7 @@ export default function BottomSheet({
     if (closest === minHeight && minHeight === 0) {
       onClose()
     }
-  }
+  }, [isDragging, minHeight, midHeight, maxHeight, sheetHeight, onClose])
 
   useEffect(() => {
     if (isDragging) {
@@ -111,7 +111,7 @@ export default function BottomSheet({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [isDragging, startY, startHeight])
+  }, [isDragging, handleMouseMove, handleMouseUp])
 
   return (
     <>
